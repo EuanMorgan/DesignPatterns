@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Observer pattern example</title>
+  </head>
+  <body>
+    <div id="count">0</div>
+    <button id="inc">+</button>
+    <button id="dec">-</button>
+    <script defer>
+      function createObservable() {
+        // Factory for creating observable objects
+
+        return {
+          subscribers: [],
+
+          subscribe(fn) {
+            this.subscribers.push(fn);
+          },
+
+          unsubscribe(fn) {
+            this.subscribers = this.subscribers.filter(
+              subscriber => subscriber !== fn
+            );
+          },
+
+          broadcast(data) {
+            for (let subscriber of this.subscribers) {
+              subscriber(data);
+            }
+          },
+        };
+      }
+
+      const observer = createObservable();
+
+      const fn = count => {
+        document.getElementById('count').innerText = count;
+      };
+
+      observer.subscribe(fn);
+      // This in itsself is an observer patternt oo.
+      document.getElementById('inc').addEventListener('click', () => {
+        observer.broadcast(
+          parseInt(document.getElementById('count').innerText) + 1
+        );
+      });
+      document.getElementById('dec').addEventListener('click', () => {
+        observer.broadcast(
+          parseInt(document.getElementById('count').innerText) - 1
+        );
+      });
+    </script>
+  </body>
+</html>
